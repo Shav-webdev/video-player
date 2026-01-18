@@ -96,12 +96,14 @@ export function Timeline({ currentTime, duration, chapters, onSeek }: TimelinePr
   const hoverPosition = hoverTime !== null ? (hoverTime / duration) * 100 : 0;
 
   return (
-    <div className="relative w-full bottom-2.5">
+    <div 
+      className="relative w-full bottom-2.5"
+      onMouseLeave={handleMouseLeave}
+    >
       <div
         ref={timelineRef}
         className="relative h-1 bg-transparent rounded-full cursor-pointer group transition-all touch-none"
         onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
         onClick={handleClick}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}

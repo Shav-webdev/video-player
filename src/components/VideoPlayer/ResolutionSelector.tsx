@@ -32,6 +32,13 @@ export function ResolutionSelector({ hls }: ResolutionSelectorProps) {
     const updateLevels = () => {
       const hlsLevels = hls.levels || [];
       console.log('HLS levels:', hlsLevels);
+      
+      // Don't update if levels aren't available yet
+      if (hlsLevels.length === 0) {
+        console.log('No HLS levels available yet');
+        return;
+      }
+
       const qualityLevels: QualityLevel[] = hlsLevels.map((level, index) => {
         const height = level.height || 0;
         const label = getResolutionLabel(height);
@@ -55,15 +62,24 @@ export function ResolutionSelector({ hls }: ResolutionSelectorProps) {
       console.log('Quality levels:', qualityLevels);
     };
 
+    // Update levels when manifest is parsed (levels become available)
+    const handleManifestParsed = () => {
+      console.log('Manifest parsed, updating levels');
+      updateLevels();
+    };
+
+    // Also try to update levels immediately if they're already available
     updateLevels();
 
+    // Listen for events
+    hls.on(Hls.Events.MANIFEST_PARSED, handleManifestParsed);
     hls.on(Hls.Events.LEVEL_SWITCHED, () => {
       setCurrentLevel(hls.currentLevel);
     });
-
     hls.on(Hls.Events.LEVELS_UPDATED, updateLevels);
 
     return () => {
+      hls.off(Hls.Events.MANIFEST_PARSED, handleManifestParsed);
       hls.off(Hls.Events.LEVEL_SWITCHED);
       hls.off(Hls.Events.LEVELS_UPDATED);
     };
@@ -105,7 +121,12 @@ export function ResolutionSelector({ hls }: ResolutionSelectorProps) {
     };
   }, [isOpen]);
 
-  if (!hls || levels.length === 0) {
+  if (!hls) {
+    return null;
+  }
+
+  // Don't render if we only have Auto (meaning levels aren't loaded yet)
+  if (levels.length <= 1) {
     return null;
   }
 

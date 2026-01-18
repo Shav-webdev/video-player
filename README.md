@@ -69,10 +69,49 @@ The application will be available at [http://localhost:3000](http://localhost:30
 ## Available Scripts
 
 - `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
+- `npm run build` - Build the application for production (static export)
+- `npm run export` - Build the application for static export (alias for build)
 - `npm run start` - Start the production server
 - `npm run lint` - Run ESLint to check code quality
 - `npm run build:icons` - Generate the SVG sprite from icon files
+
+## Deployment to GitHub Pages
+
+This project is configured for automatic deployment to GitHub Pages using GitHub Actions.
+
+### Setup Instructions
+
+1. **Enable GitHub Pages**:
+   - Go to your repository on GitHub
+   - Navigate to **Settings** → **Pages**
+   - Under **Source**, select **GitHub Actions**
+
+2. **Configure Base Path** (if needed):
+   - If your repository name is not the root domain (e.g., `username.github.io`), you need to set a base path
+   - In `next.config.ts`, uncomment and set the `basePath`:
+     ```typescript
+     basePath: '/your-repo-name',
+     ```
+
+3. **Push to trigger deployment**:
+   - Push to the `main` or `master` branch
+   - GitHub Actions will automatically build and deploy your site
+   - The deployment workflow is located at `.github/workflows/deploy.yml`
+
+4. **Access your site**:
+   - If using a custom domain: your configured domain
+   - If using GitHub Pages default: `https://username.github.io/repo-name`
+
+### Manual Deployment
+
+To build the static export manually:
+
+```bash
+npm run build:icons
+npm run build
+```
+
+The static files will be generated in the `out/` directory, which can be deployed to any static hosting service.
 
 ## Project Structure
 
